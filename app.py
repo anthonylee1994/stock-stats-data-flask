@@ -1,4 +1,3 @@
-import os
 from flask import Flask
 from controllers.home_controller import home_controller
 from controllers.stocks_controller import stocks_controller
@@ -11,4 +10,4 @@ app.register_blueprint(stocks_controller)
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host=os.getenv('HOST'))
+    app.run(debug=True)
