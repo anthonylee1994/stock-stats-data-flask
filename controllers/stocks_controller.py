@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
 from services.stock_prices_diff_service import StockPriceDiffService
 
 
@@ -18,6 +18,11 @@ def stock_prices_diff(symbol):
 @stocks_controller.route('/stock-prices-diff/<symbol>/previous-diff/<int:previous_diff>')
 def stock_prices_diff_for_previous_diff(symbol, previous_diff):
     return StockPriceDiffService(symbol, get_interval()).get_stock_prices_diff_for_previous_diff(previous_diff).to_json()
+
+
+@stocks_controller.route('/stock-prices-diff-integrated/<symbol>')
+def stock_prices_diff_integrated(symbol):
+    return jsonify(StockPriceDiffService(symbol, get_interval()).get_stock_prices_diff_integrated())
 
 
 @stocks_controller.route('/stock-prices-diff-histogram/<symbol>')
@@ -43,3 +48,8 @@ def stock_prices_diff_stats_2d(symbol):
 @stocks_controller.route('/stock-prices-diff-histogram/<symbol>/2d')
 def stock_prices_diff_histogram_2d(symbol):
     return StockPriceDiffService(symbol, get_interval()).get_stock_prices_diff_histogram_2d()
+
+
+@stocks_controller.route('/stock-prices-diff-integrated/<symbol>/2d')
+def stock_prices_diff_integrated_2d(symbol):
+    return jsonify(StockPriceDiffService(symbol, get_interval()).get_stock_prices_diff_integrated_2d())

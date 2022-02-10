@@ -65,6 +65,29 @@ class StockPriceDiffService:
         df.sort_index(inplace=True)
         return df
 
+    def get_stock_prices_diff_integrated(self) -> DataFrame:
+        stock_prices_diff = self.get_stock_prices_diff()
+        stats = self.get_stock_prices_diff_stats()
+        histogram = self.get_stock_prices_diff_histogram()
+        return {
+            'stock_prices_diff': json.loads(stock_prices_diff.to_json()),
+            'stats': json.loads(stats.to_json()),
+            'histogram': json.loads(histogram.to_json()),
+        }
+
+    def get_stock_prices_diff_for_previous_diff_integrated(self, previous_diff: int) -> DataFrame:
+        stock_prices_diff = self.get_stock_prices_diff_for_previous_diff(
+            previous_diff)
+        stats = self.get_stock_prices_diff_for_previous_diff_stats(
+            previous_diff)
+        histogram = self.get_stock_prices_diff_for_previous_diff_histogram(
+            previous_diff)
+        return {
+            'stock_prices_diff': json.loads(stock_prices_diff.to_json()),
+            'stats': json.loads(stats.to_json()),
+            'histogram': json.loads(histogram.to_json()),
+        }
+
     def get_stock_prices_diff_2d(self) -> DataFrame:
         return {"counts":  dict((i, json.loads(self.get_stock_prices_diff_for_previous_diff(
             int(i)).to_json())) for i in self.get_stock_prices_diff_histogram().index)}
@@ -76,3 +99,7 @@ class StockPriceDiffService:
     def get_stock_prices_diff_histogram_2d(self) -> DataFrame:
         return {"counts":  dict((i, json.loads(self.get_stock_prices_diff_for_previous_diff_histogram(
             int(i)).to_json())) for i in self.get_stock_prices_diff_histogram().index)}
+
+    def get_stock_prices_diff_integrated_2d(self) -> DataFrame:
+        return {"counts":  dict((i, self.get_stock_prices_diff_for_previous_diff_integrated(
+            int(i))) for i in self.get_stock_prices_diff_histogram().index)}
