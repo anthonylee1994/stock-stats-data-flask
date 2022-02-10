@@ -1,4 +1,6 @@
 import json
+from typing import Any
+
 from pandas import DataFrame
 import yfinance as yf
 
@@ -9,7 +11,7 @@ class StockPriceDiffService:
         self.ticker = yf.Ticker(self.symbol)
         self.stock_prices = None
         self.interval = interval
-        self.cached_historical_prices: DataFrame = None
+        self.cached_historical_prices = None
 
     def get_historical_price(self) -> DataFrame:
         if self.cached_historical_prices is None:
@@ -65,7 +67,7 @@ class StockPriceDiffService:
         df.sort_index(inplace=True)
         return df
 
-    def get_stock_prices_diff_integrated(self) -> DataFrame:
+    def get_stock_prices_diff_integrated(self) -> dict[str, Any]:
         stock_prices_diff = self.get_stock_prices_diff()
         stats = self.get_stock_prices_diff_stats()
         histogram = self.get_stock_prices_diff_histogram()
@@ -75,7 +77,7 @@ class StockPriceDiffService:
             'histogram': json.loads(histogram.to_json()),
         }
 
-    def get_stock_prices_diff_for_previous_diff_integrated(self, previous_diff: int) -> DataFrame:
+    def get_stock_prices_diff_for_previous_diff_integrated(self, previous_diff: int) -> dict[str, Any]:
         stock_prices_diff = self.get_stock_prices_diff_for_previous_diff(
             previous_diff)
         stats = self.get_stock_prices_diff_for_previous_diff_stats(
@@ -88,18 +90,18 @@ class StockPriceDiffService:
             'histogram': json.loads(histogram.to_json()),
         }
 
-    def get_stock_prices_diff_2d(self) -> DataFrame:
+    def get_stock_prices_diff_2d(self) -> dict[str, dict[Any, Any]]:
         return {"counts":  dict((i, json.loads(self.get_stock_prices_diff_for_previous_diff(
             int(i)).to_json())) for i in self.get_stock_prices_diff_histogram().index)}
 
-    def get_stock_prices_diff_stats_2d(self) -> DataFrame:
+    def get_stock_prices_diff_stats_2d(self) -> dict[str, dict[Any, Any]]:
         return {"counts":  dict((i, json.loads(self.get_stock_prices_diff_for_previous_diff_stats(
             int(i)).to_json())) for i in self.get_stock_prices_diff_histogram().index)}
 
-    def get_stock_prices_diff_histogram_2d(self) -> DataFrame:
+    def get_stock_prices_diff_histogram_2d(self) -> dict[str, dict[Any, Any]]:
         return {"counts":  dict((i, json.loads(self.get_stock_prices_diff_for_previous_diff_histogram(
             int(i)).to_json())) for i in self.get_stock_prices_diff_histogram().index)}
 
-    def get_stock_prices_diff_integrated_2d(self) -> DataFrame:
+    def get_stock_prices_diff_integrated_2d(self) -> dict[str, dict[Any, dict[str, Any]]]:
         return {"counts":  dict((i, self.get_stock_prices_diff_for_previous_diff_integrated(
             int(i))) for i in self.get_stock_prices_diff_histogram().index)}
